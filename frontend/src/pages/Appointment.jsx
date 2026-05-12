@@ -67,10 +67,12 @@ const Appointment = () => {
 
         while (cursor < endTime) {
             const formattedTime = cursor.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+            const isBooked = alreadyBooked.includes(formattedTime)
 
-            if (!alreadyBooked.includes(formattedTime)) {
-                slots.push({ time: formattedTime })
-            }
+            slots.push({ 
+                time: formattedTime, 
+                isBooked: isBooked 
+            })
 
             cursor.setMinutes(cursor.getMinutes() + 30)
         }
@@ -198,11 +200,14 @@ const Appointment = () => {
                             {timeSlots.map((item, index) => (
                                 <button
                                     key={index}
-                                    onClick={() => setSlotTime(item.time)}
-                                    className={`px-5 py-2 rounded-full text-sm border transition-all cursor-pointer
-                                        ${item.time === slotTime
-                                            ? 'bg-primary text-white border-primary'
-                                            : 'text-[#949494] border-[#B4B4B4] hover:border-primary hover:text-primary'
+                                    onClick={() => !item.isBooked && setSlotTime(item.time)}
+                                    disabled={item.isBooked}
+                                    className={`px-5 py-2 rounded-full text-sm border transition-all 
+                                        ${item.isBooked 
+                                            ? 'bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed line-through' 
+                                            : item.time === slotTime
+                                                ? 'bg-primary text-white border-primary cursor-pointer'
+                                                : 'text-[#949494] border-[#B4B4B4] hover:border-primary hover:text-primary cursor-pointer'
                                         }`}
                                 >
                                     {item.time.toLowerCase()}
